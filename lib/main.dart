@@ -19,7 +19,6 @@ class FloMartApp extends StatelessWidget {
     const baseGreen = Color(0xFF178246);
 
     return MaterialApp(
-<<<<<<< HEAD
       debugShowCheckedModeBanner: false,
       title: 'FloMart',
       theme: ThemeData(
@@ -39,14 +38,6 @@ class FloMartApp extends StatelessWidget {
         AppRoute.blog.path: (context) => const BlogPage(),
         AppRoute.tentangKami.path: (context) => const TentangKamiPage(),
       },
-=======
-      title: 'FLOMART',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
-      home: const BlogPage(),
->>>>>>> titania
     );
   }
 }
