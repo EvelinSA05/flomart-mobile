@@ -1,48 +1,22 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+enum AppRoute {
+  beranda('/beranda'),
+  toko('/toko'),
+  mulaiJualan('/mulai-jualan'),
+  blog('/blog'),
+  tentangKami('/tentang-kami');
+
+  const AppRoute(this.path);
+
+  final String path;
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TokoPage extends StatelessWidget {
+  const TokoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const baseGreen = Color(0xFF178246);
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'FloMart',
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF8F7F3),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: baseGreen,
-          primary: baseGreen,
-          surface: const Color(0xFFF8F7F3),
-        ),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: Color(0xFF294233)),
-          titleMedium: TextStyle(
-            color: Color(0xFF1E2D24),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-      home: const ShopPage(),
-    );
-  }
-}
-
-class ShopPage extends StatelessWidget {
-  const ShopPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final bottomNavPadding = kIsWeb ? 12.0 : 10.0;
-
     final products = <Product>[
       const Product(
         name: 'Benih Selada',
@@ -103,17 +77,17 @@ class ShopPage extends StatelessWidget {
     return Scaffold(
       bottomNavigationBar: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.fromLTRB(10, 0, 10, bottomNavPadding),
-        child: const SafeArea(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+        child: SafeArea(
           top: false,
-          child: _BottomNavSection(),
+          child: _BottomNavSection(currentRoute: AppRoute.toko),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const _HeaderSection(),
+              const _HeaderSection(currentRoute: AppRoute.toko),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
@@ -121,9 +95,10 @@ class ShopPage extends StatelessWidget {
                     const SizedBox(height: 12),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(18),
-                      child: Image.asset(
+                      child: const AppAssetImage(
                         'assets/Rectangle 14 10.png',
                         fit: BoxFit.cover,
+                        fallbackIcon: Icons.storefront_outlined,
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -147,7 +122,9 @@ class ShopPage extends StatelessWidget {
 }
 
 class _HeaderSection extends StatelessWidget {
-  const _HeaderSection();
+  const _HeaderSection({required this.currentRoute});
+
+  final AppRoute currentRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +139,10 @@ class _HeaderSection extends StatelessWidget {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Image.asset('assets/Frame 4.png', height: 34),
+                    child: const AppAssetImage(
+                      'assets/Frame 4.png',
+                      height: 34,
+                    ),
                   ),
                 ),
                 const _HeaderIcon(asset: 'assets/Instagram.png'),
@@ -188,11 +168,31 @@ class _HeaderSection extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text('Beranda'),
-                  _ActiveTab(label: 'Toko'),
-                  Text('Mulai Jualan'),
-                  Text('Blog'),
-                  Text('Tentang Kami'),
+                  _TopNavLink(
+                    label: 'Beranda',
+                    route: AppRoute.beranda,
+                    currentRoute: currentRoute,
+                  ),
+                  _TopNavLink(
+                    label: 'Toko',
+                    route: AppRoute.toko,
+                    currentRoute: currentRoute,
+                  ),
+                  _TopNavLink(
+                    label: 'Mulai Jualan',
+                    route: AppRoute.mulaiJualan,
+                    currentRoute: currentRoute,
+                  ),
+                  _TopNavLink(
+                    label: 'Blog',
+                    route: AppRoute.blog,
+                    currentRoute: currentRoute,
+                  ),
+                  _TopNavLink(
+                    label: 'Tentang Kami',
+                    route: AppRoute.tentangKami,
+                    currentRoute: currentRoute,
+                  ),
                 ],
               ),
             ),
@@ -210,7 +210,12 @@ class _FilterAndSearchRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Image.asset('assets/flowbite_filter-solid.png', width: 18, height: 18),
+        const AppAssetImage(
+          'assets/flowbite_filter-solid.png',
+          width: 18,
+          height: 18,
+          fallbackIcon: Icons.filter_alt_outlined,
+        ),
         const SizedBox(width: 6),
         const Text(
           'Filters',
@@ -231,7 +236,12 @@ class _FilterAndSearchRow extends StatelessWidget {
             child: Row(
               children: [
                 const SizedBox(width: 10),
-                Image.asset('assets/mdi_search.png', width: 16, height: 16),
+                const AppAssetImage(
+                  'assets/mdi_search.png',
+                  width: 16,
+                  height: 16,
+                  fallbackIcon: Icons.search,
+                ),
                 const SizedBox(width: 8),
                 const Expanded(
                   child: Text(
@@ -403,9 +413,10 @@ class _ProductCard extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
+                        child: AppAssetImage(
                           product.image,
                           fit: BoxFit.contain,
+                          fallbackIcon: Icons.image_outlined,
                         ),
                       ),
                     ),
@@ -421,7 +432,12 @@ class _ProductCard extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Image.asset('assets/Star 4.png', width: 10, height: 10),
+                          const AppAssetImage(
+                            'assets/Star 4.png',
+                            width: 10,
+                            height: 10,
+                            fallbackIcon: Icons.star_rounded,
+                          ),
                           const SizedBox(width: 3),
                           Text(
                             product.rating.toStringAsFixed(1),
@@ -469,7 +485,12 @@ class _ProductCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Center(
-                    child: Image.asset('assets/Shop Cart.png', width: 14, height: 14),
+                    child: const AppAssetImage(
+                      'assets/Shop Cart.png',
+                      width: 14,
+                      height: 14,
+                      fallbackIcon: Icons.shopping_cart_outlined,
+                    ),
                   ),
                 ),
               ],
@@ -502,7 +523,9 @@ class _PaginationBar extends StatelessWidget {
 }
 
 class _BottomNavSection extends StatelessWidget {
-  const _BottomNavSection();
+  const _BottomNavSection({required this.currentRoute});
+
+  final AppRoute currentRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -519,29 +542,38 @@ class _BottomNavSection extends StatelessWidget {
           ),
         ],
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _BottomNavItem(
             asset: 'assets/Vector (2).png',
             label: 'Beranda',
-            active: true,
+            route: AppRoute.beranda,
+            active: currentRoute == AppRoute.beranda,
           ),
           _BottomNavItem(
             asset: 'assets/Vector (3).png',
             label: 'Toko',
+            route: AppRoute.toko,
+            active: currentRoute == AppRoute.toko,
           ),
           _BottomNavItem(
             asset: 'assets/healthicons_market-stall.png',
             label: 'Mulai Berjualan',
+            route: AppRoute.mulaiJualan,
+            active: currentRoute == AppRoute.mulaiJualan,
           ),
           _BottomNavItem(
             asset: 'assets/Vector (4).png',
             label: 'Blog',
+            route: AppRoute.blog,
+            active: currentRoute == AppRoute.blog,
           ),
           _BottomNavItem(
             asset: 'assets/Vector (5).png',
             label: 'Tentang Kami',
+            route: AppRoute.tentangKami,
+            active: currentRoute == AppRoute.tentangKami,
           ),
         ],
       ),
@@ -560,7 +592,12 @@ class _HeaderIcon extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Image.asset(asset, width: 18, height: 18),
+        AppAssetImage(
+          asset,
+          width: 18,
+          height: 18,
+          fallbackIcon: Icons.circle_outlined,
+        ),
         if (withBadge)
           Positioned(
             top: -2,
@@ -779,59 +816,210 @@ class _BottomNavItem extends StatelessWidget {
   const _BottomNavItem({
     required this.asset,
     required this.label,
+    required this.route,
     this.active = false,
   });
 
   final String asset;
   final String label;
+  final AppRoute route;
   final bool active;
 
   @override
   Widget build(BuildContext context) {
     final color = active ? const Color(0xFF148242) : const Color(0xFF1E2D24);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 28,
-          height: 28,
-          child: active
-              ? Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF178246),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.all(6),
-                  child: ColorFiltered(
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () => _navigateTo(context, route),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 28,
+            height: 28,
+            child: active
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF178246),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Image.asset(asset),
+                    padding: const EdgeInsets.all(6),
+                    child: ColorFiltered(
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                      child: AppAssetImage(
+                        asset,
+                        fallbackIcon: Icons.circle_outlined,
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: AppAssetImage(
+                      asset,
+                      color: const Color(0xFF178246),
+                      fallbackIcon: Icons.circle_outlined,
+                    ),
                   ),
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(3),
-                  child: Image.asset(asset, color: const Color(0xFF178246)),
-                ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          width: 58,
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 8.5,
-              fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-              color: color,
-              height: 1.15,
+          ),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: 58,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 8.5,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                color: color,
+                height: 1.15,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+}
+
+class _TopNavLink extends StatelessWidget {
+  const _TopNavLink({
+    required this.label,
+    required this.route,
+    required this.currentRoute,
+  });
+
+  final String label;
+  final AppRoute route;
+  final AppRoute currentRoute;
+
+  @override
+  Widget build(BuildContext context) {
+    if (route == currentRoute) {
+      return _ActiveTab(label: label);
+    }
+
+    return InkWell(
+      onTap: () => _navigateTo(context, route),
+      child: Text(label),
+    );
+  }
+}
+
+void _navigateTo(BuildContext context, AppRoute route) {
+  final currentRouteName = ModalRoute.of(context)?.settings.name;
+  if (currentRouteName == route.path) {
+    return;
+  }
+
+  Navigator.pushReplacementNamed(context, route.path);
+}
+
+class AppAssetImage extends StatelessWidget {
+  const AppAssetImage(
+    this.asset, {
+    super.key,
+    this.width,
+    this.height,
+    this.fit,
+    this.color,
+    this.fallbackIcon = Icons.image_not_supported_outlined,
+  });
+
+  final String asset;
+  final double? width;
+  final double? height;
+  final BoxFit? fit;
+  final Color? color;
+  final IconData fallbackIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    final themeColor = color ?? const Color(0xFF178246);
+
+    return Image.asset(
+      asset,
+      width: width,
+      height: height,
+      fit: fit,
+      color: color,
+      errorBuilder: (context, error, stackTrace) {
+        return SizedBox(
+          width: width,
+          height: height,
+          child: Center(
+            child: Icon(
+              fallbackIcon,
+              size: (width ?? height ?? 24).clamp(12, 36),
+              color: themeColor,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SimpleInfoPage extends StatelessWidget {
+  const SimpleInfoPage({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.currentRoute,
+  });
+
+  final String title;
+  final String description;
+  final AppRoute currentRoute;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+        child: SafeArea(
+          top: false,
+          child: _BottomNavSection(currentRoute: currentRoute),
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _HeaderSection(currentRoute: currentRoute),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        description,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF4C5F54),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+     );
   }
 }
 
