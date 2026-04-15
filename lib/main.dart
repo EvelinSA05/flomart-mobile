@@ -34,7 +34,7 @@ class FloMartApp extends StatelessWidget {
       routes: {
         AppRoute.beranda.path: (context) => const BerandaPage(),
         AppRoute.toko.path: (context) => const TokoPage(),
-        AppRoute.mulaiJualan.path: (context) => const MulaiJualanPage(),
+        AppRoute.mulaiJualan.path: (context) => const HomePage(),
         AppRoute.blog.path: (context) => const BlogPage(),
         AppRoute.tentangKami.path: (context) => const TentangKamiPage(),
       },
